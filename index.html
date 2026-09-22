@@ -31,10 +31,20 @@
         min-height: 100% !important;
         width: 100% !important;
       }
+      #iso-guide-host {
+        position: fixed; inset: 0; z-index: 2147483000; pointer-events: none;
+      }
+      #iso-guide-host .iso-guide-overlay {
+        position: fixed !important; inset: 0 !important; pointer-events: none;
+      }
+      #iso-guide-host .iso-guide-card {
+        position: fixed !important; pointer-events: auto;
+      }
     </style>
   </head>
   <body>
     <div id="root"></div>
-    <div id="iso-build-stamp" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.2 sans-serif;color:#888;pointer-events:none;">v56</div>
+    <div id="iso-guide-host"></div>
+    <div id="iso-build-stamp" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.2 sans-serif;color:#888;pointer-events:none;">v59</div>
   </body>
 </html>
