@@ -9,7 +9,7 @@
     <script src="./shinylive/load-shinylive-sw.js?v=40" type="module"></script>
     <script type="module">
       import { runApp } from "./shinylive/shinylive.js";
-      const response = await fetch("./app.json?v=64&t=" + Date.now(), { cache: "no-store" });
+      const response = await fetch("./app.json?v=65&t=" + Date.now(), { cache: "no-store" });
       if (!response.ok) throw new Error("HTTP error loading app.json: " + response.status);
       const appFiles = await response.json();
       runApp(document.getElementById("root"), "viewer", {
@@ -45,6 +45,6 @@
   <body>
     <div id="root"></div>
     <div id="iso-guide-host"></div>
-    <div id="iso-build-stamp" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.2 sans-serif;color:#888;pointer-events:none;">v64</div>
+    <div id="iso-build-stamp" style="position:fixed;right:8px;bottom:6px;z-index:9999;font:11px/1.2 sans-serif;color:#888;pointer-events:none;">v65</div>
   </body>
 </html>
