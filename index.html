@@ -6,71 +6,95 @@
     <title>Isotope lab correction</title>
     <script src="./shinylive/load-shinylive-sw.js" type="module"></script>
     <script type="module">
-      import { runExportedApp } from "./shinylive/shinylive.js";
-      runExportedApp({
-        id: "root",
-        appEngine: "r",
-        relPath: "",
-      });
+      import { runApp } from "./shinylive/shinylive.js";
+      const response = await fetch("./app.json");
+      if (!response.ok) throw new Error("HTTP error loading app.json: " + response.status);
+      const appFiles = await response.json();
+      runApp(document.getElementById("root"), "viewer", {
+        startFiles: appFiles,
+        viewerHeight: "100%"
+      }, "r");
     </script>
     <link rel="stylesheet" href="./shinylive/style-resets.css" />
     <link rel="stylesheet" href="./shinylive/shinylive.css" />
     <style>
-      html, body { margin: 0; height: 100%; }
-      #root { min-height: 100vh; width: 100%; overflow: auto; }
-      #page-howto-btn {
-        position: fixed; top: 10px; right: 12px; z-index: 5000;
-        background: #1f4e79; color: #fff; border: 0; border-radius: 6px;
-        padding: 8px 14px; font: 600 14px/1.2 system-ui, sans-serif;
-        cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      html, body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
       }
-      #page-howto-btn:hover { background: #16375a; }
-      #page-howto-panel {
-        display: none; position: fixed; top: 48px; right: 12px; z-index: 5000;
-        width: min(420px, calc(100vw - 24px)); max-height: calc(100vh - 70px);
-        overflow: auto; background: #fff; border: 1px solid #c9d4e0;
-        border-radius: 8px; padding: 14px 16px;
-        box-shadow: 0 8px 28px rgba(0,0,0,0.2);
-        font: 14px/1.45 system-ui, sans-serif; color: #222;
+      #page-howto-bar {
+        flex: 0 0 auto;
+        z-index: 10000;
+        background: #1f4e79;
+        color: #fff;
+        padding: 10px 16px 12px 16px;
+        font: 14px/1.45 system-ui, sans-serif;
       }
-      #page-howto-panel.open { display: block; }
-      #page-howto-panel h3 { margin: 0 0 8px 0; font-size: 16px; }
-      #page-howto-panel ol { margin: 8px 0 12px 18px; padding: 0; }
-      #page-howto-panel li { margin: 6px 0; }
-      #page-howto-start {
-        background: #1f4e79; color: #fff; border: 0; border-radius: 6px;
-        padding: 7px 12px; font-weight: 600; cursor: pointer;
+      #page-howto-bar h2 {
+        margin: 0 0 6px 0;
+        font-size: 16px;
+      }
+      #page-howto-bar ol {
+        margin: 0 0 8px 18px;
+        padding: 0;
+        columns: 2;
+        column-gap: 24px;
+      }
+      #page-howto-bar li { margin: 2px 0; break-inside: avoid; }
+      #page-howto-bar button {
+        background: #fff;
+        color: #1f4e79;
+        border: 0;
+        border-radius: 6px;
+        padding: 7px 12px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      #page-howto-bar button:hover { background: #e8f1fa; }
+      #root {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+        position: relative;
+      }
+      #root .shinylive-container,
+      #root .shinylive-container.viewer,
+      #root .shinylive-viewer,
+      #root iframe.app-frame {
+        height: 100% !important;
+        min-height: 100% !important;
+        width: 100% !important;
       }
     </style>
   </head>
   <body>
-    <button type="button" id="page-howto-btn">How to</button>
-    <div id="page-howto-panel" role="dialog" aria-label="How to use this app">
-      <h3>How to use this app</h3>
+    <div id="page-howto-bar">
+      <h2>How to use this app</h2>
       <ol>
         <li><b>Choose instrument</b> — GasBench (C/O), Thermo EA (C/N + TCD), or Sercon EA.</li>
         <li><b>Add the raw file</b> — drop or browse a .xls/.xlsx. Corrections run automatically.</li>
         <li><b>Exclude outliers</b> — tick standards to leave out of the fit (they turn red).</li>
         <li><b>International → Inhouse → Samples</b> — same order as the lab notebooks.</li>
         <li><b>Download</b> — save the corrected Excel workbook.</li>
-        <li><b>Decimals</b> — measured isotope ratios use 3 decimals. Caffeine N true value is 1.00, not 1.000.</li>
+        <li><b>Decimals</b> — isotope ratios use 3 decimals. Caffeine N true value is 1.00, not 1.000.</li>
       </ol>
-      <p style="font-size:13px;color:#555;">Sercon: optional weighing templates can be dropped under the raw file.</p>
-      <p><button type="button" id="page-howto-start">Start interactive guide</button></p>
+      <button type="button" id="page-howto-start">Start interactive guide</button>
     </div>
     <div id="root"></div>
     <script>
       (function () {
-        var btn = document.getElementById("page-howto-btn");
-        var panel = document.getElementById("page-howto-panel");
-        var start = document.getElementById("page-howto-start");
-        btn.addEventListener("click", function () {
-          panel.classList.toggle("open");
-        });
-        start.addEventListener("click", function () {
-          panel.classList.remove("open");
-          if (typeof window.startIsoGuide === "function") window.startIsoGuide();
-          else alert("Wait until the app has finished loading, then click How to again.");
+        document.getElementById("page-howto-start").addEventListener("click", function () {
+          var iframe = document.querySelector("iframe.app-frame");
+          try {
+            if (iframe && iframe.contentWindow && typeof iframe.contentWindow.startIsoGuide === "function") {
+              iframe.contentWindow.startIsoGuide();
+              return;
+            }
+          } catch (err) {}
+          alert("Wait until the app has finished loading, then click Start interactive guide again.");
         });
       })();
     </script>
