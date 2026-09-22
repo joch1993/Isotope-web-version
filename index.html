@@ -22,43 +22,10 @@
         margin: 0;
         height: 100%;
         overflow: hidden;
-        display: flex;
-        flex-direction: column;
       }
-      #page-howto-bar {
-        flex: 0 0 auto;
-        z-index: 10000;
-        background: #1f4e79;
-        color: #fff;
-        padding: 10px 16px 12px 16px;
-        font: 14px/1.45 system-ui, sans-serif;
-      }
-      #page-howto-bar h2 {
-        margin: 0 0 6px 0;
-        font-size: 16px;
-      }
-      #page-howto-bar ol {
-        margin: 0 0 8px 18px;
-        padding: 0;
-        columns: 2;
-        column-gap: 24px;
-      }
-      #page-howto-bar li { margin: 2px 0; break-inside: avoid; }
-      #page-howto-bar button {
-        background: #fff;
-        color: #1f4e79;
-        border: 0;
-        border-radius: 6px;
-        padding: 7px 12px;
-        font-weight: 700;
-        cursor: pointer;
-      }
-      #page-howto-bar button:hover { background: #e8f1fa; }
       #root {
-        flex: 1 1 auto;
-        min-height: 0;
+        height: 100%;
         width: 100%;
-        position: relative;
       }
       #root .shinylive-container,
       #root .shinylive-container.viewer,
@@ -71,32 +38,6 @@
     </style>
   </head>
   <body>
-    <div id="page-howto-bar">
-      <h2>How to use this app</h2>
-      <ol>
-        <li><b>Choose instrument</b> — GasBench (C/O), Thermo EA (C/N + TCD), or Sercon EA.</li>
-        <li><b>Add the raw file</b> — drop or browse a .xls/.xlsx. Corrections run automatically.</li>
-        <li><b>Exclude outliers</b> — tick standards to leave out of the fit (they turn red).</li>
-        <li><b>International → Inhouse → Samples</b> — same order as the lab notebooks.</li>
-        <li><b>Download</b> — save the corrected Excel workbook.</li>
-        <li><b>Decimals</b> — isotope ratios use 3 decimals. Caffeine N true value is 1.00, not 1.000.</li>
-      </ol>
-      <button type="button" id="page-howto-start">Start interactive guide</button>
-    </div>
     <div id="root"></div>
-    <script>
-      (function () {
-        document.getElementById("page-howto-start").addEventListener("click", function () {
-          var iframe = document.querySelector("iframe.app-frame");
-          try {
-            if (iframe && iframe.contentWindow && typeof iframe.contentWindow.startIsoGuide === "function") {
-              iframe.contentWindow.startIsoGuide();
-              return;
-            }
-          } catch (err) {}
-          alert("Wait until the app has finished loading, then click Start interactive guide again.");
-        });
-      })();
-    </script>
   </body>
 </html>
