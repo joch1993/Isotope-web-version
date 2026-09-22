@@ -3,11 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <title>Isotope lab correction</title>
-    <script src="./shinylive/load-shinylive-sw.js" type="module"></script>
+    <script>
+      (function () {
+        var bar = document.getElementById("page-howto-bar");
+        if (bar) bar.remove();
+        var btn = document.getElementById("page-howto-btn");
+        if (btn) btn.remove();
+        var panel = document.getElementById("page-howto-panel");
+        if (panel) panel.remove();
+      })();
+    </script>
+    <script src="./shinylive/load-shinylive-sw.js?v=13" type="module"></script>
     <script type="module">
       import { runApp } from "./shinylive/shinylive.js";
-      const response = await fetch("./app.json");
+      const response = await fetch("./app.json?v=20260922e", { cache: "no-store" });
       if (!response.ok) throw new Error("HTTP error loading app.json: " + response.status);
       const appFiles = await response.json();
       runApp(document.getElementById("root"), "viewer", {
@@ -18,15 +29,9 @@
     <link rel="stylesheet" href="./shinylive/style-resets.css" />
     <link rel="stylesheet" href="./shinylive/shinylive.css" />
     <style>
-      html, body {
-        margin: 0;
-        height: 100%;
-        overflow: hidden;
-      }
-      #root {
-        height: 100%;
-        width: 100%;
-      }
+      html, body { margin: 0; height: 100%; overflow: hidden; }
+      #root { height: 100%; width: 100%; }
+      #page-howto-bar, #page-howto-btn, #page-howto-panel { display: none !important; }
       #root .shinylive-container,
       #root .shinylive-container.viewer,
       #root .shinylive-viewer,
