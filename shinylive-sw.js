@@ -1838,7 +1838,7 @@ function asgiToRes(res, body) {
 // src/shinylive-sw.ts
 var useCaching = false;
 var cacheName = "::shinyliveServiceworker";
-var version = "v39";
+var version = "v40";
 function addCoiHeaders(resp) {
   const headers = new Headers(resp.headers);
   headers.set("Cross-Origin-Embedder-Policy", "require-corp");
@@ -1900,19 +1900,25 @@ self.addEventListener("fetch", function(event) {
   if (m_appPath) {
     event.respondWith(
       (async () => {
-        let pollCount = 40;
-        while (!apps[m_appPath[1]]) {
-          if (pollCount == 0) {
+        const appKey = m_appPath[1];
+        const waitForParent = async (tries) => {
+          for (let i = 0; i < tries; i++) {
+            if (apps[appKey]) return true;
+            await sleep(50);
+          }
+          return !!apps[appKey];
+        };
+        if (!await waitForParent(80)) {
+          const allClients = await self.clients.matchAll({ includeUncontrolled: true });
+          for (const client of allClients) {
+            client.postMessage({ type: "serviceworkerStart" });
+          }
+          if (!await waitForParent(80)) {
             return new Response(
               `Couldn't find parent page for ${url}. This may be because the Service Worker has updated. Try reloading the page.`,
-              {
-                status: 404
-              }
+              { status: 404 }
             );
           }
-          console.log("App URL not registered. Waiting 50ms.");
-          await sleep(50);
-          pollCount--;
         }
         url.pathname = url.pathname.replace(appPathRegex, "/");
         const isAppRoot = url.pathname === "/";
@@ -1979,7 +1985,7 @@ self.addEventListener("fetch", function(event) {
 });
 var apps = {};
 (async () => {
-  const allClients = await self.clients.matchAll();
+  const allClients = await self.clients.matchAll({ includeUncontrolled: true });
   for (const client of allClients) {
     client.postMessage({
       type: "serviceworkerStart"
