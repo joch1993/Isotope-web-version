@@ -1838,7 +1838,7 @@ function asgiToRes(res, body) {
 // src/shinylive-sw.ts
 var useCaching = false;
 var cacheName = "::shinyliveServiceworker";
-var version = "v25";
+var version = "v26";
 function addCoiHeaders(resp) {
   const headers = new Headers(resp.headers);
   headers.set("Cross-Origin-Embedder-Policy", "require-corp");
@@ -1900,7 +1900,7 @@ self.addEventListener("fetch", function(event) {
   if (m_appPath) {
     event.respondWith(
       (async () => {
-        let pollCount = 5;
+        let pollCount = 40;
         while (!apps[m_appPath[1]]) {
           if (pollCount == 0) {
             return new Response(
