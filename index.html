@@ -18,7 +18,7 @@
     <script src="./shinylive/load-shinylive-sw.js?v=13" type="module"></script>
     <script type="module">
       import { runApp } from "./shinylive/shinylive.js";
-      const response = await fetch("./app.json?v=20260922e", { cache: "no-store" });
+      const response = await fetch("./app.json?v=20260922g", { cache: "no-store" });
       if (!response.ok) throw new Error("HTTP error loading app.json: " + response.status);
       const appFiles = await response.json();
       runApp(document.getElementById("root"), "viewer", {
