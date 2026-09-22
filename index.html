@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
     <title>Isotope lab correction</title>
     <script>
       (function () {
@@ -13,12 +14,22 @@
         if (btn) btn.remove();
         var panel = document.getElementById("page-howto-panel");
         if (panel) panel.remove();
+        if (window.caches) {
+          caches.keys().then(function (keys) {
+            keys.forEach(function (k) { caches.delete(k); });
+          });
+        }
+        if (navigator.serviceWorker) {
+          navigator.serviceWorker.getRegistrations().then(function (regs) {
+            regs.forEach(function (r) { r.update(); });
+          });
+        }
       })();
     </script>
-    <script src="./shinylive/load-shinylive-sw.js?v=13" type="module"></script>
+    <script src="./shinylive/load-shinylive-sw.js?v=14" type="module"></script>
     <script type="module">
       import { runApp } from "./shinylive/shinylive.js";
-      const response = await fetch("./app.json?v=20260922h", { cache: "no-store" });
+      const response = await fetch("./app.json?v=" + Date.now(), { cache: "no-store" });
       if (!response.ok) throw new Error("HTTP error loading app.json: " + response.status);
       const appFiles = await response.json();
       runApp(document.getElementById("root"), "viewer", {
